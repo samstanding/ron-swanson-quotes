@@ -1,11 +1,18 @@
-const app = angular.module('myApp', [] );
+const app = angular.module('myApp', ['ngRoute'] );
 
-const appController = app.controller('AppController', ['$http', function ($http) {
+const appController = app.controller('AppController', ['RonService', function (RonService) {
     let self = this;
-    console.log('what up');
-    
-    self.quote = {};
-  
+
+    self.getQuote = RonService.getQuote;
+    self.quote = RonService.quote;
+
+    self.getQuote();
+
+}]);
+
+app.service('RonService', ['$http', function ($http) {
+    let self = this;
+    self.quote = {list: []};
 
     self.getQuote = function () {
         $http({
@@ -13,12 +20,9 @@ const appController = app.controller('AppController', ['$http', function ($http)
             url: 'http://ron-swanson-quotes.herokuapp.com/v2/quotes'
         }).then(function (response) {
             console.log(response);
-            self.quote = {list: response.data};
+            self.quote.list = response.data;
         }).catch(function (error) {
             console.log(error);
         })
     }
-    self.getQuote();
-    console.log(self.quote);
-    
-}])
+}]);
